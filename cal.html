@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora e Tabuada</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #f0e5d8, #f8f2eb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background: #fff7e6;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .calculator h1 {
+            color: #d4a373;
+            margin-bottom: 20px;
+        }
+        .display {
+            font-size: 2em;
+            margin-bottom: 10px;
+            padding: 10px;
+            width: calc(100% - 22px);
+            border: 2px solid #d4a373;
+            border-radius: 10px;
+            text-align: right;
+            background: #fdfaf6;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #d4a373;
+            color: white;
+            transition: background 0.3s;
+        }
+        .buttons button:hover {
+            background: #b0885a;
+        }
+        .buttons .operator {
+            background: #e6c2a0;
+        }
+        .buttons .operator:hover {
+            background: #c8a383;
+        }
+        .buttons .special {
+            background: #6a0572;
+        }
+        .buttons .special:hover {
+            background: #4b0269;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Calculadora e Tabuada</h1>
+        <input type="text" class="display" id="display" readonly>
+        <div class="buttons">
+            <button onclick="appendNumber(7)">7</button>
+            <button onclick="appendNumber(8)">8</button>
+            <button onclick="appendNumber(9)">9</button>
+            <button class="operator" onclick="setOperation('/')">÷</button>
+            <button onclick="appendNumber(4)">4</button>
+            <button onclick="appendNumber(5)">5</button>
+            <button onclick="appendNumber(6)">6</button>
+            <button class="operator" onclick="setOperation('*')">×</button>
+            <button onclick="appendNumber(1)">1</button>
+            <button onclick="appendNumber(2)">2</button>
+            <button onclick="appendNumber(3)">3</button>
+            <button class="operator" onclick="setOperation('-')">−</button>
+            <button onclick="appendNumber(0)">0</button>
+            <button class="operator" onclick="setOperation('+')">+</button>
+            <button class="special" onclick="calculate()">=</button>
+            <form action="cal.php" method="post">
+                <input type="hidden" name="numero" id="tabuadaNumber">
+                <button type="submit" class="special">T</button>
+            </form>
+            <button class="operator" onclick="clearDisplay()">C</button>
+        </div>
+    </div>
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '';
+        let operation = '';
+        let previousInput = '';
+ 
+        function appendNumber(number) {
+            currentInput += number;
+            updateDisplay();
+        }
+ 
+        function setOperation(op) {
+            if (currentInput === '') return;
+            if (previousInput !== '') calculate();
+            operation = op;
+            previousInput = currentInput;
+            currentInput = '';
+        }
+ 
+        function calculate() {
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            currentInput = result;
+            operation = '';
+            previousInput = '';
+            updateDisplay();
+        }
+ 
+        function updateDisplay() {
+            display.value = currentInput;
+        }
+ 
+        function clearDisplay() {
+            currentInput = '';
+            operation = '';
+            previousInput = '';
+            updateDisplay();
+        }
+ 
+        document.querySelector("form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            document.getElementById("tabuadaNumber").value = currentInput;
+            this.submit();
+        });
+    </script>
+</body>
+</html>
